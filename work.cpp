@@ -57,11 +57,14 @@ graph makeGraph(int numNodes, int degreeLim, int weightLim){
 	int temp1;
 	int temp2;
 	int temp3;
+	int temp4;
 	bool canAdd;
-	srand(time(0));	
+	srand(time(0));
+
 	for(int i = 0; i < numNodes; i++){
 //		graph2[i].nodeNum = i;
 		tempN.nodeNum = i;
+		tempN.parent = i;
 		graph2.push_back(tempN);
 	}
 	for(int i = 0; i < numNodes; i++){
@@ -70,7 +73,7 @@ graph makeGraph(int numNodes, int degreeLim, int weightLim){
 			canAdd = true;
 			temp2 = rand() % numNodes;
 //			temp2++;
-			cout << "i: " << i << endl;
+//			cout << "i: " << i << endl;
 			for(auto const& k : graph2[i].edges){
 				if(k.two == temp2){
 					canAdd = false;
@@ -78,20 +81,58 @@ graph makeGraph(int numNodes, int degreeLim, int weightLim){
 				if(k.two == i){
 					canAdd = false;
 				}
+				if(temp2 == i){
+					canAdd = false;
+				}
 			}
 			if(canAdd){
 				temp3 = (rand() % weightLim) + 1;
 				tempE.weight = temp3;
-				cout << temp3 << endl;
+//				cout << temp3 << endl;
 				tempE.one = i;
 				tempE.two = temp2;
 				graph2[i].edges.push_back(tempE);
 				tempE.one = temp2;
 				tempE.two = i;
 				graph2[temp2].edges.push_back(tempE);
+				temp3 = graph2[i].parent;
+				temp4 = graph2[temp2].parent;
+				for(int k = 0; k < numNodes; k++){
+					if(graph2[k].parent == temp4){
+						graph2[k].parent = temp3;
+					}
+				}
 			}
 		}
 	}
+	bool connected = false;
+	while(!connected){
+		temp1 = graph2[0].parent;
+		connected = true;
+		for(int i = 0; i < numNodes; i++){
+			if(temp1 != graph2[i].parent){
+				connected = false;
+				temp2 = i;
+				temp3 = graph2[i].parent;
+				break;
+			}
+		}
+		if(!connected){
+			tempE.weight = (rand() % weightLim) + 1;
+			tempE.one = 0;
+			tempE.two = temp2;
+			graph2[0].edges.push_back(tempE);
+			tempE.one = temp2;
+			tempE.two = 0;
+			graph2[temp2].edges.push_back(tempE);
+			for(int k = 0; k < numNodes; k++){
+				if(graph2[k].parent == temp3){
+					graph2[k].parent == graph2[0].parent;
+				}
+			}
+		}
+	}
+
 	graph answer;
 	answer.nodes = graph2;
 	return answer;
@@ -103,7 +144,7 @@ void printGraph(graph input){
 		for(auto const& j : input.nodes[i].edges){
 			cout << " -(" << j.weight << ")-> " << j.two << endl;
 		}
-		cout << "/n" << endl;
+		cout << endl;
 	}
 }
 
@@ -127,7 +168,7 @@ graph Kruskal(vector<node> graph2){
 			PQ.push(j);
 		}
 	}
-	cout << PQ.top().weight << endl;
+//	cout << PQ.top().weight << endl;
 	temp1 = PQ.top().one;
 	temp2 = PQ.top().two;
 	mst[temp1].nodeNum = temp1;
@@ -143,7 +184,7 @@ graph Kruskal(vector<node> graph2){
 	mst[temp2].parent = temp1;
 
 	PQ.pop();
-	cout << PQ.top().weight << endl;
+//	cout << PQ.top().weight << endl;
 	int counter = 1;				// REPLACE this who thing with if(cycle)
 	while(counter != graph2.size()-1){ // there should be n-1 edges
 		temp1 = PQ.top().one;
@@ -214,6 +255,7 @@ graph Prim(vector<node> graph2){
 	edge tempE;
 	int temp1;
 	int temp2;
+	list <int> mstL;
 	tempN.nodeNum = INT_MAX;
 	mst.resize(graph2.size(), tempN);
 
@@ -269,24 +311,78 @@ graph Prim(vector<node> graph2){
 int main(int argc, char *argv[]){
 
 	using namespace std;
+	using namespace std::chrono;
 
+/*
 	int i1 = stoi(argv[1]);
 	int i2 = stoi(argv[2]);
 	int i3 = stoi(argv[3]);
 //	cout << "do we get to the beginning?" << endl;
 
 	graph test = makeGraph(i1, i2, i3);
-	cout << "The graph:" << endl;
+	cout << "Graph:" <<endl;
 	printGraph(test);
+	cout << "\n" << endl;
 
-	cout << "before Kruskal's" << endl;
+//	cout << "before Kruskal's" << endl;
 	graph K = Kruskal(test.nodes);
 	cout << "Kruskal's Algorithm:" << endl;
 	printGraph(K);
 
-	cout << "before Prim's" << endl;
+	cout << "\n" << endl;
 	graph P = Prim(test.nodes);
 	cout << "Prim's Algorithm:" << endl;
 	printGraph(P);
+*/
+	graph test;
+	graph K;
+	graph P;
+
+
+	int greg;
+	int fidel;
+	for(int i = 50; i <= 1000; i+=50){
+		cout << "numNodes: " << i << endl;
+		test = makeGraph(i, i/10, 100);
+		auto start = high_resolution_clock::now();
+		K = Kruskal(test.nodes);
+		auto stop = high_resolution_clock::now();
+		auto duration = duration_cast<microseconds>(stop - start);
+		cout << "Kruskal's i/10 degree " << duration.count() << endl;
+
+		start = high_resolution_clock::now();
+		P = Prim(test.nodes);
+		stop = high_resolution_clock::now();
+		duration = duration_cast<microseconds>(stop - start);
+		cout << "Prim's i/10 degree " << duration.count() << endl;
+
+
+		test = makeGraph(i, i/3, 100);
+		start = high_resolution_clock::now();
+		K = Kruskal(test.nodes);
+		stop = high_resolution_clock::now();
+		duration = duration_cast<microseconds>(stop - start);
+		cout << "Kruskal's i/3 degree " << duration.count() << endl;
+
+		start = high_resolution_clock::now();
+		P = Prim(test.nodes);
+		stop = high_resolution_clock::now();
+		duration = duration_cast<microseconds>(stop - start);
+		cout << "Prim's i/3 degree " << duration.count() << endl;
+
+
+		test = makeGraph(i, i, 100);
+		start = high_resolution_clock::now();
+		K = Kruskal(test.nodes);
+		stop = high_resolution_clock::now();
+		duration = duration_cast<microseconds>(stop - start);
+		cout << "Kruskal's i degree " << duration.count() << endl;
+
+		start = high_resolution_clock::now();
+		P = Prim(test.nodes);
+		stop = high_resolution_clock::now();
+		duration = duration_cast<microseconds>(stop - start);
+		cout << "Prim's i degree " << duration.count() << "\n" << endl;
+	}
 
 }
