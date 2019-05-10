@@ -1,0 +1,68 @@
+Grigoriy Redozubov
+Fidel Briones
+
+
+1. Program
+to compile: make
+
+data structures:
+vector - stores nodes in graph
+list - stores edges in nodes
+priority queue - orders edges in MST algorithms
+
+2. Classes:
+
+class edge{}:
+- an edge in any graph
+- stores nodeNumber of attached vertices
+
+class node{}
+- a node in any graph
+- stores a "parent" int for handling disjoint sets (Kruskal) and keys (Prim)
+- a linked list of edges
+
+class graph{}
+- only stores a vector of nodes
+- plays the role of a graph
+
+
+3. Functions:
+
+struct betterThan{}
+- overwritten operator to make priority queue put lower numbers up
+
+graph completeGraph()
+- builds a complete graph, where all nodes are connected to every other node
+- used to test MST algorithms
+
+graph makeGraph()
+- builds a graph based on three inputs: numNodes, degreeLim, and weightLim
+- numNodes: the total number of nodes in the graph
+- degreeLim: the highest degree of any node
+- weightLim: the highest weight of ay edge
+- will always be a connected graph (although this may cause some nodes to have a higher degree than degreeLim
+
+void printGraph()
+- prints a graph
+- "cout"s node, every edge attached to it, and their weight
+
+graph Kruskal()
+- takes a VECTOR of nodes (not a graph) for an input
+- builds a MST based on the Kruskal Algorithm
+- "disjointed sets" issue dealt with by node.parent
+
+
+graph Prim()
+- takes a VECTOR of nodes (not a graph) for an input
+- old interpretation of Prim's algorithm, prim2() is more correct, and the one we use for the project
+
+graph prim2()
+- takes a VECTOR of nodes (not a graph) for an input
+- builds a MST based on the Prim's Algorithm
+- "node key" issue dealth with by node.parent
+
+
+
+
+
+
