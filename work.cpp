@@ -50,6 +50,42 @@ struct betterThan{ //overwrite operator for priority queue
 	}
 };
 
+
+graph completeGraph(int numNodes, int weightLim){
+	node tempN;
+	edge tempE;
+	vector<node> graph2;
+	int temp1;
+	int temp2;
+	int temp3;
+	srand(time(0));
+
+	for(int i = 0; i < numNodes; i++){
+		tempN.nodeNum = i;
+		graph2.push_back(tempN);
+	}
+	for(int i = 0; i < numNodes; i++){
+		for(int j = numNodes-1; j > i; j--){
+			temp1 = i;
+			temp2 = j;
+			temp3 = (rand() % weightLim) + 1;
+			tempE.one = temp1;
+			tempE.two = temp2;
+			tempE.weight = temp3;
+			graph2[temp1].edges.push_back(tempE);
+			tempE.one = temp2;
+			tempE.two = temp1;
+			graph2[temp2].edges.push_back(tempE);
+		}
+	}
+	graph answer;
+	answer.nodes = graph2;
+	return answer;
+
+}
+
+
+
 graph makeGraph(int numNodes, int degreeLim, int weightLim){
 	node tempN;
 	edge tempE;
@@ -343,7 +379,10 @@ int main(int argc, char *argv[]){
 //	cout << "do we get to the beginning?" << endl;
 
 	graph test = makeGraph(i1, i2, i3);
-	cout << "Graph:" <<endl;
+*/
+
+	graph test = completeGraph(7, 10);
+/*	cout << "Graph:" <<endl;
 	printGraph(test);
 	cout << "\n" << endl;
 
@@ -357,6 +396,29 @@ int main(int argc, char *argv[]){
 	cout << "Prim's Algorithm:" << endl;
 	printGraph(P);
 */
+	graph K;
+	graph P;
+
+	for(int i = 50; i <= 1000; i+=50){
+		test = completeGraph(i, 100);
+
+		cout << "numNodes: " << i << endl;
+		auto start = high_resolution_clock::now();
+		K = Kruskal(test.nodes);
+		auto stop = high_resolution_clock::now();
+		auto duration = duration_cast<microseconds>(stop-start);
+		cout << "Kruskal's: " << duration.count() << endl;
+
+		start = high_resolution_clock::now();
+		P = Prim(test.nodes);
+		stop = high_resolution_clock::now();
+		duration = duration_cast<microseconds>(stop-start);
+		cout << "Prim's: " << duration.count() << "\n" << endl;
+
+	}
+
+
+/*
 	graph test;
 	graph K;
 	graph P;
@@ -367,48 +429,51 @@ int main(int argc, char *argv[]){
 	for(int i = 50; i <= 1000; i+=50){
 		cout << "numNodes: " << i << endl;
 		test = makeGraph(i, i/10, 100);
-		cout << "numEdges: "  << countEdges(test) << endl;
+//		cout << "numEdges: "  << countEdges(test) << endl;
+		cout << "Edge Limit: #nodes/10" << endl;
 		auto start = high_resolution_clock::now();
 		K = Kruskal(test.nodes);
 		auto stop = high_resolution_clock::now();
 		auto duration = duration_cast<microseconds>(stop - start);
-		cout << "Kruskal's i/10 degree " << duration.count() << endl;
+		cout << "Kruskal's: " << duration.count() << endl;
 
 		start = high_resolution_clock::now();
 		P = Prim(test.nodes);
 		stop = high_resolution_clock::now();
 		duration = duration_cast<microseconds>(stop - start);
-		cout << "Prim's i/10 degree " << duration.count() << endl;
+		cout << "Prim's: " << duration.count() << "\n" << endl;
 
 
 		test = makeGraph(i, i/3, 100);
-		cout << "numEdges: "  << countEdges(test) << endl;
+//		cout << "numEdges: "  << countEdges(test) << endl;
+		cout << "Edge Limit: #nodes/3" << endl;
 		start = high_resolution_clock::now();
 		K = Kruskal(test.nodes);
 		stop = high_resolution_clock::now();
 		duration = duration_cast<microseconds>(stop - start);
-		cout << "Kruskal's i/3 degree " << duration.count() << endl;
+		cout << "Kruskal's: " << duration.count() << endl;
 
 		start = high_resolution_clock::now();
 		P = Prim(test.nodes);
 		stop = high_resolution_clock::now();
 		duration = duration_cast<microseconds>(stop - start);
-		cout << "Prim's i/3 degree " << duration.count() << endl;
+		cout << "Prim's: " << duration.count() << "\n" << endl;
 
 
 		test = makeGraph(i, i, 100);
-		cout << "numEdges: "  << countEdges(test) << endl;
+//		cout << "numEdges: "  << countEdges(test) << endl;
+		cout << "Edge Limit: #nodes" << endl;
 		start = high_resolution_clock::now();
 		K = Kruskal(test.nodes);
 		stop = high_resolution_clock::now();
 		duration = duration_cast<microseconds>(stop - start);
-		cout << "Kruskal's i degree " << duration.count() << endl;
+		cout << "Kruskal's: " << duration.count() << endl;
 
 		start = high_resolution_clock::now();
 		P = Prim(test.nodes);
 		stop = high_resolution_clock::now();
 		duration = duration_cast<microseconds>(stop - start);
-		cout << "Prim's i degree " << duration.count() << "\n" << endl;
+		cout << "Prim's: " << duration.count() << "\n" << endl;
 	}
-
+*/
 }
