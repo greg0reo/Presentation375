@@ -268,11 +268,15 @@ graph Prim(vector<node> graph2){
 		PQ.push(j);
 	}
 	int counter = 0;
+	mstL.push_back(0);
 	bool match;
 	while(counter != mst.size()-1){
 		match = true;
-		for(int i = 0; i < mst.size(); i++){
-			if(PQ.top().two == mst[i].nodeNum){
+//		for(int i = 0; i < mst.size(); i++){
+//			if(PQ.top().two == mst[i].nodeNum){
+		for(auto const& i : mstL){
+			if(PQ.top().two == i){
+
 				PQ.pop();
 				match = false;
 				break;
@@ -292,6 +296,7 @@ graph Prim(vector<node> graph2){
 			tempE.two = temp1;
 			mst[temp2].edges.push_back(tempE);
 			counter++;
+			mstL.push_back(temp2);
 			PQ.pop();
 			for(auto const& j : graph2[temp2].edges){
 				PQ.push(j);
@@ -341,7 +346,7 @@ int main(int argc, char *argv[]){
 
 	int greg;
 	int fidel;
-	for(int i = 50; i <= 1000; i+=50){
+	for(int i = 3000; i <= 5000; i+=500){
 		cout << "numNodes: " << i << endl;
 		test = makeGraph(i, i/10, 100);
 		auto start = high_resolution_clock::now();
