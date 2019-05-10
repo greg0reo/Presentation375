@@ -50,6 +50,13 @@ struct betterThan{ //overwrite operator for priority queue
 	}
 };
 
+struct minus{
+	public:
+	bool operator()(node const& n1, node const& n2){
+		return n1.parent > n2.parent;
+	}
+};
+
 
 graph completeGraph(int numNodes, int weightLim){
 	node tempN;
@@ -355,6 +362,74 @@ graph Prim(vector<node> graph2){
 
 }
 
+graph prim2(vector<node> graph2){
+	vector<node> mst;
+	node tempN;
+	edge tempE;
+	int temp1;
+	int temp2;
+	int counter;
+	tempN.nodeNum = INT_MAX;
+	tempN.parent = INT_MAX;
+	mst.resize(graph2.size(), tempN);
+	mst[0].nodeNum = 0;
+	mst[0].parent = 0;
+	int champ = INT_MAX;
+	int champNode=0;
+	priority_queue<edge, vector<edge>, betterThan> PQ;
+
+
+	for(auto i : graph2[0].edges){
+		if(mst[i.two].parent > i.weight){
+			mst[i.two].parent = i.weight;
+			PQ.push(i);
+		}
+	}
+	counter++;
+
+	bool match = true;
+	while(counter != graph2.size()-1){
+		bool match = true;
+		tempE = PQ.top();
+		if(mst[tempE.two].parent == 0){
+			match = false;
+			PQ.pop();
+		}
+
+		if(match){
+
+			temp1 = PQ.top().one;
+			temp2 = PQ.top().two;
+			tempE.weight = PQ.top().weight;
+//			mst[temp1].nodeNum = temp1;
+			mst[temp2].nodeNum = temp2;
+			tempE.one = temp1;
+			tempE.two = temp2;
+			mst[temp1].edges.push_back(tempE);
+			tempE.one = temp2;
+			tempE.two = temp1;
+			mst[temp2].edges.push_back(tempE);
+			counter++;
+			mst[temp2].parent = 0;
+//			mstL.push_back(temp2);
+			PQ.pop();
+			for(auto const& j : graph2[temp2].edges){
+				if(mst[j.two].parent > j.weight){
+					mst[j.two].parent = j.weight;
+					PQ.push(j);
+				}
+			}
+		}
+	}
+
+	graph answer;
+	answer.nodes = mst;
+	return answer;
+}
+
+
+
+
 int countEdges(graph G){
 	int counter;
 	for(int i = 0; i < G.nodes.size(); i++){
@@ -399,6 +474,10 @@ int main(int argc, char *argv[]){
 	graph K;
 	graph P;
 
+	ofstream out;
+	out.open("output.csv");
+
+
 	for(int i = 50; i <= 1000; i+=50){
 		test = completeGraph(i, 100);
 
@@ -410,12 +489,15 @@ int main(int argc, char *argv[]){
 		cout << "Kruskal's: " << duration.count() << endl;
 
 		start = high_resolution_clock::now();
-		P = Prim(test.nodes);
+		P = prim2(test.nodes);
 		stop = high_resolution_clock::now();
-		duration = duration_cast<microseconds>(stop-start);
-		cout << "Prim's: " << duration.count() << "\n" << endl;
+		auto duration2 = duration_cast<microseconds>(stop-start);
+		cout << "Prim's: " << duration2.count() << "\n" << endl;
 
+		out << duration.count() << "," << duration2.count() << endl;
 	}
+
+	out.close();
 
 
 /*
