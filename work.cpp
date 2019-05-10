@@ -78,9 +78,6 @@ graph makeGraph(int numNodes, int degreeLim, int weightLim){
 				if(k.two == temp2){
 					canAdd = false;
 				}
-				if(k.two == i){
-					canAdd = false;
-				}
 				if(temp2 == i){
 					canAdd = false;
 				}
@@ -97,9 +94,12 @@ graph makeGraph(int numNodes, int degreeLim, int weightLim){
 				graph2[temp2].edges.push_back(tempE);
 				temp3 = graph2[i].parent;
 				temp4 = graph2[temp2].parent;
-				for(int k = 0; k < numNodes; k++){
-					if(graph2[k].parent == temp4){
-						graph2[k].parent = temp3;
+				if(temp3 != temp4){
+
+					for(int k = 0; k < numNodes; k++){
+						if(graph2[k].parent == temp4){
+							graph2[k].parent = temp3;
+						}
 					}
 				}
 			}
@@ -257,10 +257,12 @@ graph Prim(vector<node> graph2){
 	int temp2;
 	list <int> mstL;
 	tempN.nodeNum = INT_MAX;
+	tempN.parent = 5;
 	mst.resize(graph2.size(), tempN);
 
 	//Find shortest edge in input graph, put those nodes into mst, remove from graph
 	mst[0].nodeNum = 0;
+	mst[0].parent = 0;
 
 	priority_queue<edge, vector<edge>, betterThan> PQ; // a priority queue of all the edges in the MST
 														// all edges in MST must be sorted by weight
@@ -274,7 +276,7 @@ graph Prim(vector<node> graph2){
 		match = true;
 //		for(int i = 0; i < mst.size(); i++){
 //			if(PQ.top().two == mst[i].nodeNum){
-		for(auto const& i : mstL){
+/*		for(auto const& i : mstL){
 			if(PQ.top().two == i){
 
 				PQ.pop();
@@ -282,6 +284,12 @@ graph Prim(vector<node> graph2){
 				break;
 			}
 		}
+*/
+		if(mst[PQ.top().two].parent == 0){
+			match = false;
+			PQ.pop();
+		}
+
 		if(match){
 
 			temp1 = PQ.top().one;
@@ -296,6 +304,7 @@ graph Prim(vector<node> graph2){
 			tempE.two = temp1;
 			mst[temp2].edges.push_back(tempE);
 			counter++;
+			mst[temp2].parent = 0;
 			mstL.push_back(temp2);
 			PQ.pop();
 			for(auto const& j : graph2[temp2].edges){
@@ -310,6 +319,15 @@ graph Prim(vector<node> graph2){
 
 }
 
+int countEdges(graph G){
+	int counter;
+	for(int i = 0; i < G.nodes.size(); i++){
+		for(auto i : G.nodes[i].edges){
+			counter++;
+		}
+	}
+	return counter;
+}
 
 
 
@@ -346,9 +364,10 @@ int main(int argc, char *argv[]){
 
 	int greg;
 	int fidel;
-	for(int i = 3000; i <= 5000; i+=500){
+	for(int i = 50; i <= 1000; i+=50){
 		cout << "numNodes: " << i << endl;
 		test = makeGraph(i, i/10, 100);
+		cout << "numEdges: "  << countEdges(test) << endl;
 		auto start = high_resolution_clock::now();
 		K = Kruskal(test.nodes);
 		auto stop = high_resolution_clock::now();
@@ -363,6 +382,7 @@ int main(int argc, char *argv[]){
 
 
 		test = makeGraph(i, i/3, 100);
+		cout << "numEdges: "  << countEdges(test) << endl;
 		start = high_resolution_clock::now();
 		K = Kruskal(test.nodes);
 		stop = high_resolution_clock::now();
@@ -377,6 +397,7 @@ int main(int argc, char *argv[]){
 
 
 		test = makeGraph(i, i, 100);
+		cout << "numEdges: "  << countEdges(test) << endl;
 		start = high_resolution_clock::now();
 		K = Kruskal(test.nodes);
 		stop = high_resolution_clock::now();
