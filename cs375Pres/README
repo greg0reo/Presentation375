@@ -5,64 +5,33 @@ Fidel Briones
 1. Program
 to compile: make
 
+Running this program, you have three choices:
+./work ==> will print out the times for Prim's and Kruskal's algorithm for a number of randomly generated graphs:
+	graphs with numNodes of 50, 100, 150, ... , 950, 1000
+	For each of the above numNodes, there will be graphs with degreeLimit numNodes/10, numNodes/3, and numNodes
+	The program will also write a file variedGraph.csv that contains the times for solving these graphs
+
+./work 1 <numNode> <degreeLimit> <weightLimit> ==> will create and print a graph with the given parameters
+	It is suggested to give a low numNode, as the entire graph will not be visible otherwise
+	The Prim's and Kruskal's solutions to this graph will also be printed
+
+./work 2 ==> will print out the times for Prim's and Kruskal's algorithm for complete graphs with
+	nodeNums of 50, 100, 150, ... , 950, 1000
+	These times will also be written to a file completeGraph.csv
+
+
+
 data structures:
 vector - stores nodes in graph
 list - stores edges in nodes
 priority queue - orders edges in MST algorithms
 
-2. Classes:
 
-class edge{}:
-- an edge in any graph
-- stores nodeNumber of attached vertices
-
-class node{}
-- a node in any graph
-- stores a "parent" int for handling disjoint sets (Kruskal) and keys (Prim)
-- a linked list of edges
-
-class graph{}
-- only stores a vector of nodes
-- plays the role of a graph
-
-
-3. Functions:
-
-struct betterThan{}
-- overwritten operator to make priority queue put lower numbers up
-
-graph completeGraph()
-- builds a complete graph, where all nodes are connected to every other node
-- used to test MST algorithms
-
-graph makeGraph()
-- builds a graph based on three inputs: numNodes, degreeLim, and weightLim
-- numNodes: the total number of nodes in the graph
-- degreeLim: the highest degree of any node
-- weightLim: the highest weight of ay edge
-- will always be a connected graph (although this may cause some nodes to have a higher degree than degreeLim
-
-void printGraph()
-- prints a graph
-- "cout"s node, every edge attached to it, and their weight
-
-graph Kruskal()
-- takes a VECTOR of nodes (not a graph) for an input
-- builds a MST based on the Kruskal Algorithm
-- "disjointed sets" issue dealt with by node.parent
-
-
-graph Prim()
-- takes a VECTOR of nodes (not a graph) for an input
-- old interpretation of Prim's algorithm, prim2() is more correct, and the one we use for the project
-
-graph prim2()
-- takes a VECTOR of nodes (not a graph) for an input
-- builds a MST based on the Prim's Algorithm
-- "node key" issue dealth with by node.parent
-
-
-
+Kruskal's Algorithm runs in O(E logE)
+Prim's Algorithm runs in O(E logV)
+However, Prim's algorithm is about twice as fast as Kruskal's algorithm.
+We assume this is because Kruskal's algorithm looks through every edge twice (once for the original, and once for the reverse).
+Despite this, they still grow at a similar rate.
 
 
 
